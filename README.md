@@ -2,6 +2,8 @@
 
 Official landing page for **Wheel Habits**, a mobile app that helps you build daily habits and manage long-term projects with a smart weighted wheel system.
 
+🌐 **Live:** [wheel-habits.vercel.app](https://wheel-habits.vercel.app/)
+
 ## Features
 
 - 🎯 **Core Habits** — Track daily non-negotiables with streaks
