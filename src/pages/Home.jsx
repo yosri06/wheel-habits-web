@@ -331,12 +331,11 @@ const Home = () => {
             <p>
               The wheel is your{" "}
               <strong>versatile life management system</strong>. Use it for
-              everything that doesn't fit into daily habits — spin whenever you
-              want, with no pressure or guilt. Switch between activities without
-              decision fatigue — the wheel chooses for you. Set weights to
-              control your priorities: weight 3 means 3x more chances than
-              weight 1. Creative randomness — surprising in the moment, but
-              perfectly balanced over time.
+              everything that doesn't fit into daily habits. Spin whenever you
+              want, with no pressure or guilt. Let the wheel choose for you and
+              avoid decision fatigue. Set weights to control your priorities:
+              weight 3 means 3x more chances than weight 1. Creative randomness,
+              surprising in the moment, but perfectly balanced over time.
             </p>
             <ul className="wheel-features">
               <li>
