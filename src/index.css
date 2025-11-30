@@ -556,32 +556,20 @@ h1 {
   flex-shrink: 0;
 }
 
-.wheel-philosophy {
-  margin-top: var(--space-lg);
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(255, 179, 0, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 179, 0, 0.2);
-  display: flex;
-  gap: var(--space-sm);
-  align-items: flex-start;
-}
-
-.philosophy-icon {
-  font-size: 1.5rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.wheel-philosophy p {
-  margin: 0;
-  color: var(--text-primary);
-  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-}
-
-.wheel-philosophy strong {
+.wheel-features .or-separator {
+  text-align: center;
+  justify-content: center;
   color: var(--amber);
+  font-weight: 500;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin: 0.5rem 0;
 }
+
+.wheel-features .or-separator::before {
+  display: none;
+}
+
 
 /* ==========================================
    ALGORITHM SECTION
@@ -1401,11 +1389,6 @@ footer {
   .setup-step {
     border-width: 2px;
   }
-}
-
-/* Dark mode is already the default, but ensure system preference is respected */
-@media (prefers-color-scheme: light) {
-  /* Site is designed for dark mode, but you could add light mode overrides here */
 }
 
 /* Print styles */

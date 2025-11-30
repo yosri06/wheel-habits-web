@@ -30,7 +30,8 @@ const Home = () => {
           </div>
           <h1>Wheel Habits</h1>
           <p className="tagline">
-            Daily essentials. <span>Long-term projects.</span> One system.
+            Daily essential habits you never skip.{" "}
+            <span>Long-term activities.</span> One system.
           </p>
 
           <div className="cta-group">
@@ -139,7 +140,8 @@ const Home = () => {
             <h3>Core Habits</h3>
             <p>
               Your daily non-negotiables. Build discipline with streaks and
-              progress tracking. These are the core habits you never skip.
+              progress tracking. Miss one day? Streak resets to zero. Keep them
+              minimal. These are the core habits you never skip.
             </p>
           </div>
 
@@ -161,9 +163,10 @@ const Home = () => {
             </div>
             <h3>Wheel Activities</h3>
             <p>
-              Non-daily habits, long-term projects, hobbies, rewards, and life
-              balance — all in one wheel. Weighted priorities, zero guilt, pure
-              motivation.
+              Non-daily habits, long-term projects, hobbies, and rewards — all
+              in one wheel. Set weights based on your priorities and spin
+              whenever you're ready. No streaks, no pressure, zero guilt — just
+              balanced activities at your own pace.
             </p>
           </div>
 
@@ -238,8 +241,8 @@ const Home = () => {
             </div>
             <h3>Fully Customizable</h3>
             <p>
-              Add, edit, reorder habits and activities. Adjust wheel weights.
-              Make it truly yours.
+              Add, edit, reorder habits and activities. Adjust wheel weights
+              based on your priorities and importance. Make it truly yours.
             </p>
           </div>
         </div>
@@ -326,41 +329,43 @@ const Home = () => {
           <div className="wheel-info">
             <h2>One wheel, endless possibilities</h2>
             <p>
-              The wheel is your <strong>life management system</strong>. Use it
-              for everything that doesn't fit into daily habits — and spin
-              whenever you want, with no pressure or guilt.
+              The wheel is your{" "}
+              <strong>versatile life management system</strong>. Use it for
+              everything that doesn't fit into daily habits — spin whenever you
+              want, with no pressure or guilt. Switch between activities without
+              decision fatigue — the wheel chooses for you. Set weights to
+              control your priorities: weight 3 means 3x more chances than
+              weight 1. Creative randomness — surprising in the moment, but
+              perfectly balanced over time.
             </p>
             <ul className="wheel-features">
               <li>
                 <strong>Project management:</strong> Balance multiple long-term
-                projects with weighted priorities
+                projects with weighted priorities.
               </li>
+              <li className="or-separator">— or —</li>
               <li>
                 <strong>Non-daily habits:</strong> Reading, calling friends,
-                hobbies that shouldn't be mandatory
+                hobbies that shouldn't be mandatory.
               </li>
+              <li className="or-separator">— or —</li>
               <li>
                 <strong>Study planning:</strong> Prioritize subjects by
                 importance — Math with coefficient 3 gets more spins than
-                English with coefficient 1
+                English with coefficient 1.
               </li>
+              <li className="or-separator">— or —</li>
               <li>
                 <strong>Reward system:</strong> Add treats and surprises to stay
-                motivated
+                motivated, or make the wheel itself a reward — spin only after
+                completing your core habits.
               </li>
+              <li className="or-separator">— or —</li>
               <li>
-                <strong>Life balance:</strong> Mix work, learning, social, and
-                fun activities in one place
+                <strong>Mix of all the above:</strong> One versatile wheel that
+                adapts to your balanced life!
               </li>
             </ul>
-            <div className="wheel-philosophy">
-              <span className="philosophy-icon">💡</span>
-              <p>
-                <strong>No pressure, no guilt.</strong> Unlike daily habits, the
-                wheel has no streaks to break. Spin once a day, three times, or
-                not at all — it's designed for motivation, not obligation.
-              </p>
-            </div>
           </div>
         </div>
       </section>
@@ -486,12 +491,12 @@ const Home = () => {
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V21h8v-6.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 16H9v-1h2v1zm4 0h-2v-1h2v1zm-5-3v-1h6v1H10zm5-3H9V9h6v3z" />
           </svg>
-          <span>Muslim Prayer Support</span>
+          <span>Muslim Prayer Support — Added as Core Habits</span>
         </div>
         <h2>Muslim Prayer Times (Optional Feature)</h2>
         <p>
-          Automatically add the 5 daily prayers to your habits with accurate
-          times from your local mosque, and choose which ones you want
+          Automatically add the 5 daily prayers to your core habits with
+          accurate times from your local mosque, and choose which ones you want
           notifications for.
         </p>
 
