@@ -587,7 +587,7 @@ const Home = () => {
 
         <div className="store-badges">
           <a
-            href="https://play.google.com/store/apps/"
+            href="https://play.google.com/store/apps/details?id=com.pactence.wheel_habits"
             target="_blank"
             rel="noopener noreferrer"
           >
