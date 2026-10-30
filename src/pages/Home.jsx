@@ -1,7 +1,95 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { WheelIcon, Footer } from "../components/Common";
+import { LanguageSwitcher } from "../i18n/LanguageProvider";
+import ThemeSwitcher from "../components/ThemeSwitcher";
+import PrayerSteps from "../components/PrayerSteps";
+import { useContent } from "../i18n/context";
+import { rich } from "../i18n/rich";
+import { HOME } from "../content/home";
+import { PRAYER } from "../content/prayer";
+
+const Check = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const Icon = ({ children }) => (
+  <div className="feature-icon">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {children}
+    </svg>
+  </div>
+);
+
+// One icon per entry of HOME[lang].features, in the same order.
+const FEATURE_ICONS = [
+  <>
+    <rect x="3" y="4" width="18" height="18" rx="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </>,
+  <>
+    <path d="M12 8v4l3 3" />
+    <circle cx="12" cy="12" r="10" />
+  </>,
+  <>
+    <circle cx="13" cy="4" r="2" />
+    <path d="M7 21l3-6 3 2 3 4" />
+    <path d="M10 15l-2-4 5-3 3 4h3" />
+  </>,
+  <>
+    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 00-3-3.87" />
+    <path d="M16 3.13a4 4 0 010 7.75" />
+  </>,
+  <>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+  </>,
+];
+
+const PRAYER_ICONS = ["🔔", "🌅", "🕌"];
+
+// Prayer mockup: example times for Paris, and the alarms turned on.
+const ARABIC_PRAYERS = ["الفجر", "الظهر", "العصر", "المغرب", "العشاء"];
+const PRAYER_TIMES = ["06:21", "12:48", "15:27", "17:47", "19:18"];
+const PRAYER_ALARMS = [true, false, false, true, true];
+
+// Icon colors of the Today mockup, as in the app.
+const MOCKUP_COLORS = ["#0EA5E9", "#8B5CF6", "transparent", "#14B8A6", "#F97316"];
+
+// Bottom bar icons of the app: Today, Builder, Journal, Partner.
+const NAV_ICONS = [
+  "M3 6h3l1.5 2L10 5M12 7h9M3 13h3l1.5 2L10 12M12 14h9M12 20h9",
+  "M4 4h6v6H4zM14 14h6v6h-6zM7 10v7h7M14 4h6v6h-6z",
+  "M6 3h12v18l-6-4-6 4z",
+  "M3 12l4-4 4 3 3-3 7 6-5 5-3-3-2 2z",
+];
+
+// The Sport wheel of the example: Cardio has weight 2, so half the wheel,
+// and sits under the pointer, as in the example's first spin.
+const EXAMPLE_WHEEL = [
+  { key: "cardio", colors: ["#FFD740", "#FFC400"], d: "M100,100 L10,100 A90,90 0 0,1 190,100 Z", label: [100, 46] },
+  { key: "strength", colors: ["#40C4FF", "#00B0FF"], d: "M100,100 L190,100 A90,90 0 0,1 100,190 Z", label: [141, 145] },
+  { key: "yoga", colors: ["#69F0AE", "#00E676"], d: "M100,100 L100,190 A90,90 0 0,1 10,100 Z", label: [59, 145] },
+];
 
 const Home = () => {
+  const c = useContent(HOME);
+  const prayer = useContent(PRAYER);
+  const [prayerOpen, setPrayerOpen] = useState(false);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -14,14 +102,27 @@ const Home = () => {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
 
+    // Changing the language draws new cards: they are watched again.
     const cards = document.querySelectorAll(".feature-card");
     cards.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
+  }, [c]);
+
+  useEffect(() => {
+    // A link such as /#data opens on its section: the page is drawn
+    // after the browser looked for it.
+    const target = window.location.hash.slice(1);
+    if (target) document.getElementById(target)?.scrollIntoView();
   }, []);
 
   return (
     <>
+      <div className="floating-controls">
+        <ThemeSwitcher />
+        <LanguageSwitcher className="floating-language" />
+      </div>
+
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
@@ -29,13 +130,16 @@ const Home = () => {
             <WheelIcon className="wheel-icon" />
           </div>
           <h1>Wheel Habits</h1>
-          <p className="tagline">
-            Daily essential habits you never skip.{" "}
-            <span>Long-term activities.</span> One system.
-          </p>
+          <p className="headline">{c.headline}</p>
+          <p className="tagline">{c.subtitle}</p>
 
           <div className="cta-group">
-            <a href="#download" className="btn btn-primary">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.pactence.wheel_habits"
+              className="btn btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <svg
                 width="24"
                 height="24"
@@ -44,62 +148,80 @@ const Home = () => {
               >
                 <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15C4.34,1.9 4.96,1.94 5.41,2.27L21.41,11.27C21.79,11.55 22,11.96 22,12.5C22,13.04 21.79,13.45 21.41,13.73L5.41,22.73C5.13,22.91 4.82,23 4.5,23C4.21,23 3.93,22.92 3.68,22.77C3.26,22.5 3,22.03 3,21.5V20.5Z" />
               </svg>
-              Get on Play Store
+              {c.playStore}
             </a>
-            <a href="#features" className="btn btn-secondary">
-              Learn More
+            <a href="#example" className="btn btn-secondary">
+              {c.learnMore}
             </a>
           </div>
         </div>
 
-        <div className="phone-mockup">
+        <div className="phone-mockup" aria-hidden="true">
           <div className="phone-frame">
-            <div className="phone-screen">
-              <div className="phone-notch"></div>
-              <div className="screen-content">
-                <div className="mini-header">Core Habits</div>
-                <div className="mini-progress">
-                  <div className="mini-progress-bar"></div>
+            <div className="phone-screen app-screen">
+              <div className="app-head">
+                <div>
+                  <div className="app-title">{c.mockup.title}</div>
+                  <div className="app-date">{c.mockup.date}</div>
                 </div>
-                <div className="mini-habits">
-                  <div className="mini-habit completed">
-                    <div className="mini-checkbox checked">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                    <span className="mini-habit-text">Morning hydration</span>
-                  </div>
-                  <div className="mini-habit completed">
-                    <div className="mini-checkbox checked">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </div>
-                    <span className="mini-habit-text">Deep work</span>
-                  </div>
-                  <div className="mini-habit">
-                    <div className="mini-checkbox"></div>
-                    <span className="mini-habit-text">Workout</span>
-                  </div>
+                <div className="app-gear">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.14 12.94a7.07 7.07 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7 7 0 00-1.63-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54a7 7 0 00-1.63.94l-2.39-.96a.5.5 0 00-.6.22L2.65 8.84a.5.5 0 00.12.64l2.03 1.58a7.07 7.07 0 000 1.88l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32a.5.5 0 00.6.22l2.39-.96c.5.39 1.05.7 1.63.94l.36 2.54a.5.5 0 00.5.42h3.84a.5.5 0 00.5-.42l.36-2.54a7 7 0 001.63-.94l2.39.96a.5.5 0 00.6-.22l1.92-3.32a.5.5 0 00-.12-.64zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z" />
+                  </svg>
                 </div>
+              </div>
+
+              <div className="app-tabs">
+                <span>{c.mockup.tabs[0]}</span>
+                <span>{c.mockup.tabs[1]}</span>
+                <span className="on">{c.mockup.tabs[2]}</span>
+              </div>
+
+              <div className="app-count">
+                <span>
+                  <i /> {c.mockup.tabs[2]}
+                </span>
+                <span>{c.mockup.done}</span>
+              </div>
+
+              <div className="app-items">
+                {c.mockup.items.map((name, i) => (
+                  <div className="app-item" key={name}>
+                    <span
+                      className={`app-icon${i === 2 ? " wheel" : ""}`}
+                      style={{ background: MOCKUP_COLORS[i] }}
+                    >
+                      {i === 2 ? <WheelIcon /> : <Check />}
+                    </span>
+                    <span className="app-name">
+                      {name}
+                      {i === 2 && <small>{c.mockup.wheel}</small>}
+                    </span>
+                    <span className={`app-check${i < 2 ? " on" : ""}`}>
+                      {i < 2 && <Check />}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="app-nav">
+                {c.mockup.nav.map((label, i) => (
+                  <div className={`app-nav-item${i === 0 ? " on" : ""}`} key={label}>
+                    <span className="app-nav-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d={NAV_ICONS[i]} />
+                      </svg>
+                    </span>
+                    {label}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
         <div className="scroll-indicator">
-          <span>Scroll to explore</span>
+          <span>{c.scroll}</span>
           <svg
             width="24"
             height="24"
@@ -113,477 +235,359 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features" id="features">
+      {/* How It Works Section */}
+      <section className="algorithm-section" id="how">
         <div className="section-header">
-          <h2 className="section-title">Everything you need</h2>
-          <p className="section-subtitle">
-            Two systems working together: daily mandatory essential habits for
-            consistency, and use-at-will weighted wheel activities for long-term
-            projects and life management.
-          </p>
+          <h2 className="section-title">{c.howTitle}</h2>
         </div>
 
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M9 11l3 3L22 4" />
-                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-              </svg>
+        <div className="setup-steps home-steps">
+          {c.howSteps.map(([title, text], i) => (
+            <div className="setup-step" key={title}>
+              <div className="step-number">{i + 1}</div>
+              <div className="step-content">
+                <h4>{title}</h4>
+                <p>{text}</p>
+              </div>
             </div>
-            <h3>Core Habits</h3>
-            <p>
-              Your daily non-negotiables. Build discipline with streaks and
-              progress tracking. Miss one day? Streak resets to zero. Keep them
-              minimal. These are the core habits you never skip.
-            </p>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <circle cx="12" cy="12" r="3" />
-                <line x1="12" y1="2" x2="12" y2="6" />
-                <line x1="12" y1="18" x2="12" y2="22" />
-                <line x1="2" y1="12" x2="6" y2="12" />
-                <line x1="18" y1="12" x2="22" y2="12" />
-              </svg>
-            </div>
-            <h3>Wheel Activities</h3>
-            <p>
-              Non-daily habits, long-term projects, hobbies, and rewards — all
-              in one wheel. Set weights based on your priorities and spin
-              whenever you're ready. No streaks, no pressure, zero guilt — just
-              balanced activities at your own pace.
-            </p>
-          </div>
+      {/* Rhythm Section */}
+      <section className="algorithm-section" id="rhythm">
+        <div className="section-header">
+          <h2 className="section-title">{c.rhythmTitle}</h2>
+          <p className="section-subtitle">{c.rhythmIntro}</p>
+        </div>
 
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 8v4l3 3" />
-                <circle cx="12" cy="12" r="10" />
-              </svg>
+        <div className="algorithm-content">
+          <div className="algorithm-factors">
+            <div className="algorithm-factor">
+              <div className="factor-icon">📅</div>
+              <h3>{c.fixedTitle}</h3>
+              <p>{c.fixedText}</p>
             </div>
-            <h3>Gentle Reminders</h3>
-            <p>
-              Set custom reminder times for any habit and receive gentle
-              notifications.
-            </p>
+            <div className="algorithm-factor">
+              <div className="factor-icon">🔄</div>
+              <h3>{c.flexTitle}</h3>
+              <p>{c.flexText}</p>
+            </div>
           </div>
-
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-              </svg>
-            </div>
-            <h3>Daily Journal</h3>
-            <p>
-              A beautiful chalkboard-style journal records your accomplishments.
-              Review your day at a glance.
-            </p>
-          </div>
-
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M17.657 18.657A8 8 0 016.343 7.343" />
-                <path d="M21 12h-4l-3-9-3 9H7" />
-              </svg>
-            </div>
-            <h3>Streak Tracking</h3>
-            <p>
-              Build momentum with consecutive day tracking. Celebrate milestones
-              with confetti animations!
-            </p>
-          </div>
-
-          <div className="feature-card">
-            <div className="feature-icon">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M12 3v18M3 12h18" />
-                <circle cx="12" cy="12" r="9" />
-              </svg>
-            </div>
-            <h3>Fully Customizable</h3>
-            <p>
-              Add, edit, reorder habits and activities. Adjust wheel weights
-              based on your priorities and importance. Make it truly yours.
-            </p>
+          <div className="algorithm-result">
+            <p>{rich(c.rhythmResult)}</p>
           </div>
         </div>
       </section>
 
-      {/* Wheel Demo Section */}
-      <section className="wheel-section">
+      {/* Habit Or Wheel Section */}
+      <section className="algorithm-section" id="kind">
+        <div className="section-header">
+          <h2 className="section-title">{c.kindTitle}</h2>
+        </div>
+
+        <div className="algorithm-content">
+          <div className="algorithm-factors">
+            <div className="algorithm-factor">
+              <div className="factor-icon">✅</div>
+              <h3>{c.habitTitle}</h3>
+              <p>{c.habitText}</p>
+            </div>
+            <div className="algorithm-factor">
+              <div className="factor-icon">🎡</div>
+              <h3>{c.wheelTitle}</h3>
+              <p>{c.wheelText}</p>
+            </div>
+          </div>
+          <div className="algorithm-result">
+            <p>{rich(c.kindResult)}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Example Section */}
+      <section className="wheel-section" id="example">
         <div className="wheel-container">
           <div className="wheel-demo">
             <svg className="wheel-svg" viewBox="0 0 200 200">
               <defs>
-                <linearGradient id="seg1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#FFD740" }} />
-                  <stop offset="100%" style={{ stopColor: "#FFC400" }} />
-                </linearGradient>
-                <linearGradient id="seg2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#40C4FF" }} />
-                  <stop offset="100%" style={{ stopColor: "#00B0FF" }} />
-                </linearGradient>
-                <linearGradient id="seg3" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#FF4081" }} />
-                  <stop offset="100%" style={{ stopColor: "#F50057" }} />
-                </linearGradient>
-                <linearGradient id="seg4" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#69F0AE" }} />
-                  <stop offset="100%" style={{ stopColor: "#00E676" }} />
-                </linearGradient>
-                <linearGradient id="seg5" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#E040FB" }} />
-                  <stop offset="100%" style={{ stopColor: "#D500F9" }} />
-                </linearGradient>
-                <linearGradient id="seg6" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style={{ stopColor: "#18FFFF" }} />
-                  <stop offset="100%" style={{ stopColor: "#00E5FF" }} />
-                </linearGradient>
+                {EXAMPLE_WHEEL.map(({ colors: [from, to] }, i) => (
+                  <linearGradient
+                    key={i}
+                    id={`seg${i + 1}`}
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" style={{ stopColor: from }} />
+                    <stop offset="100%" style={{ stopColor: to }} />
+                  </linearGradient>
+                ))}
               </defs>
-
-              <path
-                d="M100,100 L100,10 A90,90 0 0,1 177.94,55 Z"
-                fill="url(#seg1)"
-                opacity="0.9"
-              />
-              <path
-                d="M100,100 L177.94,55 A90,90 0 0,1 177.94,145 Z"
-                fill="url(#seg2)"
-                opacity="0.9"
-              />
-              <path
-                d="M100,100 L177.94,145 A90,90 0 0,1 100,190 Z"
-                fill="url(#seg3)"
-                opacity="0.9"
-              />
-              <path
-                d="M100,100 L100,190 A90,90 0 0,1 22.06,145 Z"
-                fill="url(#seg4)"
-                opacity="0.9"
-              />
-              <path
-                d="M100,100 L22.06,145 A90,90 0 0,1 22.06,55 Z"
-                fill="url(#seg5)"
-                opacity="0.9"
-              />
-              <path
-                d="M100,100 L22.06,55 A90,90 0 0,1 100,10 Z"
-                fill="url(#seg6)"
-                opacity="0.9"
-              />
+              {EXAMPLE_WHEEL.map(({ key, d }, i) => (
+                <path key={key} d={d} fill={`url(#seg${i + 1})`} opacity="0.9" />
+              ))}
+              {EXAMPLE_WHEEL.map(({ key, label: [x, y] }) => (
+                <text
+                  key={key}
+                  x={x}
+                  y={y}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="#1A1A1A"
+                  fontFamily="Roboto"
+                  fontWeight="700"
+                  fontSize="13"
+                >
+                  {c.tree[key]}
+                </text>
+              ))}
               <circle cx="100" cy="100" r="30" fill="#FFB300" />
               <text
                 x="100"
                 y="105"
                 textAnchor="middle"
                 fill="#000"
-                fontFamily="Outfit"
+                fontFamily="Roboto"
                 fontWeight="700"
                 fontSize="12"
               >
-                SPIN
+                {c.spin}
               </text>
-              <polygon points="100,15 92,0 108,0" fill="#448AFF" />
+              <polygon points="100,15 92,0 108,0" fill="#6153F5" />
             </svg>
           </div>
 
           <div className="wheel-info">
-            <h2>One wheel, endless possibilities</h2>
-            <p>
-              The wheel is your{" "}
-              <strong>versatile life management system</strong>. Use it for
-              everything that doesn't fit into daily habits. Spin whenever you
-              want, with no pressure or guilt. Let the wheel choose for you and
-              avoid decision fatigue. Set weights to control your priorities:
-              weight 3 means 3x more chances than weight 1. Creative randomness,
-              surprising in the moment, but perfectly balanced over time.
-            </p>
-            <ul className="wheel-features">
-              <li>
-                <strong>Project management:</strong> Balance multiple long-term
-                projects with weighted priorities.
-              </li>
-              <li className="or-separator">— or —</li>
-              <li>
-                <strong>Non-daily habits:</strong> Reading, calling friends,
-                hobbies that shouldn't be mandatory.
-              </li>
-              <li className="or-separator">— or —</li>
-              <li>
-                <strong>Study planning:</strong> Prioritize subjects by
-                importance — Math with coefficient 3 gets more spins than
-                English with coefficient 1.
-              </li>
-              <li className="or-separator">— or —</li>
-              <li>
-                <strong>Reward system:</strong> Add treats and surprises to stay
-                motivated, or make the wheel itself a reward — spin only after
-                completing your core habits.
-              </li>
-              <li className="or-separator">— or —</li>
-              <li>
-                <strong>Mix of all the above:</strong> One versatile wheel that
-                adapts to your balanced life!
-              </li>
-            </ul>
+            <h2>{c.exampleTitle}</h2>
+            <p>{rich(c.exampleText)}</p>
+            <p className="example-note">{c.exampleNote}</p>
           </div>
         </div>
       </section>
 
-      {/* Smart Algorithm Section */}
-      <section className="algorithm-section">
+      {/* Wheel Uses Section */}
+      <section className="features" id="uses">
         <div className="section-header">
-          <h2 className="section-title">Smart Algorithm</h2>
-          <p className="section-subtitle">
-            Our smart algorithm combines two factors to ensure fair selection.
-          </p>
+          <h2 className="section-title">{c.usesTitle}</h2>
+          <p className="section-subtitle">{c.usesIntro}</p>
+        </div>
+
+        <ul className="wheel-features uses-list">
+          {c.uses.map((use) => (
+            <li key={use}>
+              <span>{rich(use)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Weights And Nested Wheels Section */}
+      <section className="features nested-section" id="chance">
+        <div className="section-header">
+          <h2 className="section-title">{c.chanceTitle}</h2>
+          <p className="section-subtitle">{c.chanceIntro}</p>
+        </div>
+
+        <h3 className="tree-title">{c.treeTitle}</h3>
+        <div className="wheel-tree">
+          <div className="tree-node tree-root">🎡 {c.tree.root}</div>
+          <ul>
+            <li>
+              <div className="tree-node">
+                🎡 {c.tree.cardio} <span className="tree-weight">×2</span>
+              </div>
+              <ul>
+                {c.tree.cardioItems.map((item) => (
+                  <li key={item}>
+                    <div className="tree-node tree-leaf">{item}</div>
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li>
+              <div className="tree-node">
+                🎡 {c.tree.strength} <span className="tree-weight">×1</span>
+              </div>
+              <ul>
+                {c.tree.strengthItems.map((item) => (
+                  <li key={item}>
+                    <div className="tree-node tree-leaf">{item}</div>
+                  </li>
+                ))}
+              </ul>
+            </li>
+            <li>
+              <div className="tree-node tree-leaf">
+                {c.tree.yoga} <span className="tree-weight">×1</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <p className="section-subtitle tree-caption">{c.chanceCaption}</p>
+      </section>
+
+      {/* Commitment Section */}
+      <section className="algorithm-section" id="commit">
+        <div className="section-header">
+          <h2 className="section-title">{c.commitTitle}</h2>
+          <p className="section-subtitle">{c.commitIntro}</p>
         </div>
 
         <div className="algorithm-content">
           <div className="algorithm-factors">
             <div className="algorithm-factor">
-              <div className="factor-icon">⚖️</div>
-              <h3>Base Weight</h3>
-              <p>
-                Set by you. Higher weight means higher chance of being picked.
-                You control your priorities.
-              </p>
+              <div className="factor-icon">🎯</div>
+              <h3>{c.keepTitle}</h3>
+              <p>{c.keepText}</p>
             </div>
             <div className="algorithm-factor">
-              <div className="factor-icon">⏳</div>
-              <h3>Neglect Bonus</h3>
-              <p>
-                Activities that haven't been picked for a while automatically
-                get a boost. Nothing stays forgotten for too long.
-              </p>
+              <div className="factor-icon">⚡</div>
+              <h3>{c.skipsTitle}</h3>
+              <p>{c.skipsText}</p>
             </div>
-          </div>
-          <div className="algorithm-result">
-            <p>
-              The result?{" "}
-              <strong>
-                Your priorities are respected, but nothing gets left behind.
-              </strong>
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Journal Section */}
-      <section className="journal-section">
+      {/* Features Section */}
+      <section className="features" id="features">
         <div className="section-header">
-          <h2 className="section-title">Your Day, Beautifully Captured</h2>
-          <p className="section-subtitle">
-            A chalkboard-style journal that automatically records your
-            accomplishments.
-          </p>
+          <h2 className="section-title">{c.supportTitle}</h2>
         </div>
 
-        <div className="journal-preview">
-          <div className="journal-date">Friday, November 28, 2025</div>
-          <div className="journal-entries">
-            <div className="journal-entry">
-              <span className="journal-icon habit-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="4" y="4" width="16" height="16" rx="2" />
-                  <polyline points="8 12 11 15 16 9" />
-                </svg>
-              </span>
-              <span className="journal-time">06:30</span>
-              <span className="journal-divider">—</span>
-              <span>Morning hydration</span>
+        <div className="features-grid">
+          {c.features.map(([title, text], i) => (
+            <div className="feature-card" key={title}>
+              <Icon>{FEATURE_ICONS[i]}</Icon>
+              <h3>{title}</h3>
+              <p>{text}</p>
             </div>
-            <div className="journal-entry">
-              <span className="journal-icon prayer-icon">
-                <svg viewBox="0 -960 960 960" fill="currentColor">
-                  <path d="m521-500 59-43 58 43-23-68 59-43h-72l-22-69-22 69h-73l59 43-23 68Zm-41 220q83 0 141.5-58T680-480q0-8-.5-16t-2.5-16q-11 47-49 77.5T539-404q-60 0-101-41t-41-101q0-46 26-82.5t68-51.5h-11q-84 0-142 58.5T280-480q0 84 58 142t142 58Zm0 252L346-160H160v-186L28-480l132-134v-186h186l134-132 134 132h186v186l132 134-132 134v186H614L480-28Zm0-112 100-100h140v-140l100-100-100-100v-140H580L480-820 380-720H240v140L140-480l100 100v140h140l100 100Zm0-340Z" />
-                </svg>
-              </span>
-              <span className="journal-time">07:15</span>
-              <span className="journal-divider">—</span>
-              <span>Fajr prayer</span>
-            </div>
-            <div className="journal-entry">
-              <span className="journal-icon habit-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="4" y="4" width="16" height="16" rx="2" />
-                  <polyline points="8 12 11 15 16 9" />
-                </svg>
-              </span>
-              <span className="journal-time">09:00</span>
-              <span className="journal-divider">—</span>
-              <span>Deep work session</span>
-            </div>
-            <div className="journal-entry">
-              <span className="journal-icon spin-icon">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <circle cx="12" cy="12" r="2" fill="currentColor" />
-                  <line x1="12" y1="12" x2="15.5" y2="7" />
-                </svg>
-              </span>
-              <span className="journal-time">14:30</span>
-              <span className="journal-divider">—</span>
-              <span>Reading (wheel spin)</span>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* Prayer Section */}
-      <section className="prayer-section">
-        <div className="prayer-badge">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V21h8v-6.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 16H9v-1h2v1zm4 0h-2v-1h2v1zm-5-3v-1h6v1H10zm5-3H9V9h6v3z" />
-          </svg>
-          <span>Muslim Prayer Support — Added as Core Habits</span>
-        </div>
-        <h2>Muslim Prayer Times (Optional Feature)</h2>
-        <p>
-          Automatically add the 5 daily prayers to your core habits with
-          accurate times from your local mosque, and choose which ones you want
-          notifications for.
-        </p>
+      <section className="prayer-section" id="prayer">
+        <div className="prayer-summary">
+          <div className="prayer-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V21h8v-6.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zm-1 16H9v-1h2v1zm4 0h-2v-1h2v1zm-5-3v-1h6v1H10zm5-3H9V9h6v3z" />
+            </svg>
+            <span>{prayer.badge}</span>
+          </div>
+          <h2>{prayer.title}</h2>
+          <p>{prayer.intro}</p>
 
-        <div className="prayer-setup">
-          <h3>How to set up prayer times</h3>
-          <div className="setup-steps">
-            <div className="setup-step">
-              <div className="step-number">1</div>
-              <div className="step-content">
-                <h4>Find your mosque on Mawaqit</h4>
-                <p>
-                  Go to{" "}
-                  <a
-                    href="https://mawaqit.net"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    mawaqit.net
-                  </a>{" "}
-                  and search for your mosque. Copy the mosque ID from the URL.
-                </p>
-                <div className="step-example">
-                  <code>
-                    mawaqit.net/en/<strong>grande-mosquee-de-paris</strong>
-                  </code>
-                  <span className="arrow">→</span>
-                  <span>
-                    Mosque ID: <strong>grande-mosquee-de-paris</strong>
-                  </span>
+          <div className="prayer-features">
+            {prayer.features.map((feature, i) => (
+              <div className="prayer-feature" key={feature}>
+                <span className="prayer-feature-icon">{PRAYER_ICONS[i]}</span>
+                <span>{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-secondary prayer-link"
+            aria-expanded={prayerOpen}
+            aria-controls="prayer-details"
+            onClick={() => setPrayerOpen((open) => !open)}
+          >
+            {prayerOpen ? c.prayerLess : c.prayerMore}
+            <svg className={`chevron${prayerOpen ? " open" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+
+        {prayerOpen && (
+          <div className="prayer-layout prayer-details" id="prayer-details">
+            <PrayerSteps content={prayer} />
+
+            <div className="phone-mockup prayer-phone" aria-hidden="true">
+              <div className="phone-frame">
+                <div className="phone-screen app-screen">
+                  <div className="app-bar">
+                    <span className="app-back">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H5M11 18l-6-6 6-6" />
+                      </svg>
+                    </span>
+                    <span className="app-bar-title">{prayer.mockup.title}</span>
+                  </div>
+
+                  <div className="app-label">{prayer.mockup.source}</div>
+                  <div className="app-sources">
+                    <div className="app-source on">
+                      <span className="app-source-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                          <circle cx="12" cy="12" r="6" />
+                          <circle cx="12" cy="12" r="2" fill="currentColor" />
+                          <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+                        </svg>
+                      </span>
+                      <strong>{prayer.mockup.geo}</strong>
+                      <small>{prayer.mockup.geoSub}</small>
+                    </div>
+                    <div className="app-source">
+                      <span className="app-source-icon">🕌</span>
+                      <strong>{prayer.mockup.mawaqit}</strong>
+                      <small>{prayer.mockup.mawaqitSub}</small>
+                    </div>
+                  </div>
+
+                  <div className="app-label">{prayer.mockup.location}</div>
+                  <div className="app-row">📍 {prayer.mockup.place}</div>
+
+                  <div className="app-label">{prayer.mockup.alarms}</div>
+                  <div className="app-alarms">
+                    {prayer.mockup.names.map((name, i) => (
+                      <div className="app-alarm" key={name}>
+                        <span className="app-alarm-name">
+                          {name}
+                          {name !== ARABIC_PRAYERS[i] && <small>{ARABIC_PRAYERS[i]}</small>}
+                        </span>
+                        <span className="app-alarm-time">{PRAYER_TIMES[i]}</span>
+                        <span className={`app-bell${PRAYER_ALARMS[i] ? " on" : ""}`}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0" />
+                            {!PRAYER_ALARMS[i] && <path d="M3 3l18 18" />}
+                          </svg>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="app-save">{prayer.mockup.save}</div>
                 </div>
               </div>
             </div>
-            <div className="setup-step">
-              <div className="step-number">2</div>
-              <div className="step-content">
-                <h4>Open Prayer Settings</h4>
-                <p>
-                  In the app, tap the <strong>mosque icon</strong> (🕌) in the
-                  Habits tab header.
-                </p>
-              </div>
-            </div>
-            <div className="setup-step">
-              <div className="step-number">3</div>
-              <div className="step-content">
-                <h4>Enter your Mosque ID</h4>
-                <p>
-                  Paste the mosque ID and enable "Add Muslim prayers". The 5
-                  daily prayers will be added automatically with accurate times!
-                </p>
-              </div>
-            </div>
           </div>
-          <div className="prayer-features">
-            <div className="prayer-feature">
-              <span className="prayer-feature-icon">🔔</span>
-              <span>Notifications at prayer times</span>
-            </div>
-            <div className="prayer-feature">
-              <span className="prayer-feature-icon">🔄</span>
-              <span>Auto-updates daily</span>
-            </div>
-            <div className="prayer-feature">
-              <span className="prayer-feature-icon">🕌</span>
-              <span>Accurate mosque times</span>
-            </div>
-          </div>
+        )}
+      </section>
+
+      {/* Data Section */}
+      <section className="algorithm-section" id="data">
+        <div className="section-header">
+          <h2 className="section-title">{c.dataTitle}</h2>
         </div>
 
-        <p style={{ marginTop: "2rem", fontSize: "0.95rem" }}>
-          Prayer times from
-        </p>
-        <a href="https://mawaqit.net" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://cdn.mawaqit.net/images/logos/mawaqit_logo_light_rounded.png"
-            alt="Mawaqit"
-            className="mawaqit-logo"
-          />
-        </a>
+        <div className="algorithm-content">
+          <div className="algorithm-result">
+            <p>{rich(c.dataText)}</p>
+          </div>
+        </div>
       </section>
 
       {/* CTA Section */}
       <section className="cta-section" id="download">
-        <h2>Ready to transform your days?</h2>
-        <p>
-          Download Wheel Habits and start building better habits today. Free, no
-          ads, just you and your goals.
-        </p>
+        <h2>{c.ctaTitle}</h2>
+        <p>{c.ctaStart}</p>
+        <p>{c.ctaText}</p>
 
         <div className="store-badges">
           <a
@@ -591,11 +595,7 @@ const Home = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
-              src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-              alt="Get it on Google Play"
-              className="store-badge"
-            />
+            <img src={c.badge} alt={c.badgeAlt} className="store-badge" />
           </a>
         </div>
       </section>

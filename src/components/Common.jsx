@@ -1,4 +1,8 @@
 import { Link } from "react-router-dom";
+import { LanguageSwitcher } from "../i18n/LanguageProvider";
+import { useContent } from "../i18n/context";
+import { COMMON } from "../content/common";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 export const WheelIcon = ({ className }) => (
   <svg
@@ -47,49 +51,55 @@ export const WheelIcon = ({ className }) => (
   </svg>
 );
 
-export const Footer = () => (
-  <>
+export const Footer = () => {
+  const c = useContent(COMMON);
+  return (
     <footer>
       <div className="footer-links">
-        <Link to="/privacy-policy">Privacy Policy</Link>
-        <Link to="/terms-of-service">Terms of Service</Link>
-        <a href="mailto:pactence@tutamail.com">Contact</a>
+        <Link to="/privacy-policy">{c.privacy}</Link>
+        <Link to="/terms-of-service">{c.terms}</Link>
+        <Link to="/delete-account">{c.deleteAccount}</Link>
+        <a href="mailto:pactence@tutamail.com">{c.contact}</a>
       </div>
-      <p className="copyright">© 2025 Wheel Habits.</p>
+      <LanguageSwitcher className="footer-language" />
+      <p className="copyright">© 2026 Wheel Habits.</p>
     </footer>
+  );
+};
 
-    <a
-      href="https://buymeacoffee.com/pactence"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="floating-coffee"
-    >
-      ☕ Buy me a coffee
-    </a>
-  </>
-);
+export const LegalHeader = () => {
+  const c = useContent(COMMON);
+  return (
+    <header className="legal-header">
+      <div className="legal-header-content">
+        <Link to="/" className="logo-link">
+          <WheelIcon />
+          Wheel Habits
+        </Link>
+        <div className="legal-header-actions">
+          <ThemeSwitcher />
+          <LanguageSwitcher />
+          <Link to="/" className="back-link">
+            {c.back}
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
+};
 
-export const LegalHeader = () => (
-  <header className="legal-header">
-    <div className="legal-header-content">
-      <Link to="/" className="logo-link">
-        <WheelIcon />
-        Wheel Habits
-      </Link>
-      <Link to="/" className="back-link">
-        ← Back to Home
-      </Link>
-    </div>
-  </header>
-);
-
-export const LegalFooter = () => (
-  <footer>
-    <div className="footer-links">
-      <Link to="/">Home</Link>
-      <Link to="/privacy-policy">Privacy Policy</Link>
-      <Link to="/terms-of-service">Terms of Service</Link>
-    </div>
-    <p className="copyright">© 2025 Wheel Habits. All rights reserved.</p>
-  </footer>
-);
+export const LegalFooter = () => {
+  const c = useContent(COMMON);
+  return (
+    <footer>
+      <div className="footer-links">
+        <Link to="/">{c.home}</Link>
+        <Link to="/privacy-policy">{c.privacy}</Link>
+        <Link to="/terms-of-service">{c.terms}</Link>
+        <Link to="/delete-account">{c.deleteAccount}</Link>
+        <a href="mailto:pactence@tutamail.com">{c.contact}</a>
+      </div>
+      <p className="copyright">© 2026 Wheel Habits. {c.rights}</p>
+    </footer>
+  );
+};

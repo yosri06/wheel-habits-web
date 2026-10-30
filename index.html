@@ -6,7 +6,14 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Manage daily habits and long-term projects with a smart weighted wheel system. Build consistency with core habits and balance multiple projects effortlessly." />
+    content="Your habits, your activities, your hobbies: together in one app. Simple habits, wheels that pick an activity, and a streak. In English, French, Spanish and Arabic." />
+  <meta name="color-scheme" content="dark light" />
+  <script>
+    try {
+      const theme = localStorage.getItem("theme");
+      if (theme) document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  </script>
   <title>Wheel Habits — Spin Your Way to Better Days</title>
 </head>
 
