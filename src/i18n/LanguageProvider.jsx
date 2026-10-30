@@ -49,7 +49,10 @@ export const LanguageProvider = ({ children }) => {
     } catch {
       // The choice then lasts for this visit only.
     }
-    navigate(localizedPath(stripLang(pathname), code) + search + hash);
+    // The visitor stays where they are reading: see ScrollToTop.
+    navigate(localizedPath(stripLang(pathname), code) + search + hash, {
+      state: { keepScroll: true },
+    });
   };
 
   return (

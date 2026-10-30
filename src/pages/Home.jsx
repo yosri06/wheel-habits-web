@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { WheelIcon, Footer } from "../components/Common";
 import { LanguageSwitcher } from "../i18n/LanguageProvider";
 import ThemeSwitcher from "../components/ThemeSwitcher";
@@ -130,7 +130,7 @@ const Home = () => {
   const lang = useLang();
   const c = useContent(HOME);
   const prayer = useContent(PRAYER);
-  const { hash } = useLocation();
+  const { search } = useLocation();
   const [prayerOpen, setPrayerOpen] = useState(false);
 
   useEffect(() => {
@@ -153,23 +153,6 @@ const Home = () => {
 
     return () => observer.disconnect();
   }, [lang]);
-
-  useEffect(() => {
-    // A link such as /#data opens on its section. Fonts and translated texts
-    // change the height of the page, so the scroll waits for them, and is
-    // done again when the language changes.
-    const target = hash.slice(1);
-    if (!target) return undefined;
-    let active = true;
-    document.fonts.ready.then(() =>
-      requestAnimationFrame(() => {
-        if (active) document.getElementById(target)?.scrollIntoView();
-      })
-    );
-    return () => {
-      active = false;
-    };
-  }, [hash, lang]);
 
   return (
     <>
@@ -206,9 +189,11 @@ const Home = () => {
                 </svg>
                 {c.playStore}
               </a>
-              <a href="#example" className="btn btn-secondary">
+              {/* Through the router, so that ScrollToTop tells it from a
+                  return in the history. */}
+              <Link to={{ search, hash: "#example" }} className="btn btn-secondary">
                 {c.learnMore}
-              </a>
+              </Link>
             </div>
           </div>
 
