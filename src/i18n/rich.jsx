@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
+import { LangLink } from "./LanguageProvider";
 
 /// Renders **bold** and [label](href) inside a translated string. A link
-/// starting with "/" stays inside the site.
+/// starting with "/" stays inside the site, in the current language.
 export const rich = (text) => {
   const parts = [];
   const pattern = /\*\*(.+?)\*\*|\[(.+?)\]\((.+?)\)/g;
@@ -14,9 +14,9 @@ export const rich = (text) => {
       parts.push(<strong key={key}>{match[1]}</strong>);
     } else if (match[3].startsWith("/")) {
       parts.push(
-        <Link key={key} to={match[3]}>
+        <LangLink key={key} to={match[3]}>
           {match[2]}
-        </Link>
+        </LangLink>
       );
     } else {
       parts.push(

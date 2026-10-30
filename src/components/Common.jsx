@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { LanguageSwitcher } from "../i18n/LanguageProvider";
+import { LangLink, LanguageSwitcher } from "../i18n/LanguageProvider";
 import { useContent } from "../i18n/context";
 import { COMMON } from "../content/common";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -56,9 +55,9 @@ export const Footer = () => {
   return (
     <footer>
       <div className="footer-links">
-        <Link to="/privacy-policy">{c.privacy}</Link>
-        <Link to="/terms-of-service">{c.terms}</Link>
-        <Link to="/delete-account">{c.deleteAccount}</Link>
+        <LangLink to="/privacy-policy">{c.privacy}</LangLink>
+        <LangLink to="/terms-of-service">{c.terms}</LangLink>
+        <LangLink to="/delete-account">{c.deleteAccount}</LangLink>
         <a href="mailto:pactence@tutamail.com">{c.contact}</a>
       </div>
       <LanguageSwitcher className="footer-language" />
@@ -72,16 +71,16 @@ export const LegalHeader = () => {
   return (
     <header className="legal-header">
       <div className="legal-header-content">
-        <Link to="/" className="logo-link">
+        <LangLink to="/" className="logo-link">
           <WheelIcon />
           Wheel Habits
-        </Link>
+        </LangLink>
         <div className="legal-header-actions">
           <ThemeSwitcher />
           <LanguageSwitcher />
-          <Link to="/" className="back-link">
+          <LangLink to="/" className="back-link">
             {c.back}
-          </Link>
+          </LangLink>
         </div>
       </div>
     </header>
@@ -93,10 +92,10 @@ export const LegalFooter = () => {
   return (
     <footer>
       <div className="footer-links">
-        <Link to="/">{c.home}</Link>
-        <Link to="/privacy-policy">{c.privacy}</Link>
-        <Link to="/terms-of-service">{c.terms}</Link>
-        <Link to="/delete-account">{c.deleteAccount}</Link>
+        <LangLink to="/">{c.home}</LangLink>
+        <LangLink to="/privacy-policy">{c.privacy}</LangLink>
+        <LangLink to="/terms-of-service">{c.terms}</LangLink>
+        <LangLink to="/delete-account">{c.deleteAccount}</LangLink>
         <a href="mailto:pactence@tutamail.com">{c.contact}</a>
       </div>
       <p className="copyright">© 2026 Wheel Habits. {c.rights}</p>

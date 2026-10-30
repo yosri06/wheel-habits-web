@@ -21,7 +21,7 @@ const PrayerTimes = () => {
         <h1>{c.title}</h1>
         <p>{c.intro}</p>
 
-        <PrayerSteps content={c} />
+        <PrayerSteps content={c} level={2} />
 
         <div className="prayer-setup">
           <div className="prayer-features">

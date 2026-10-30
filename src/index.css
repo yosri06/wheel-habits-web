@@ -77,6 +77,13 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Links inside text are underlined: color alone does not set them apart. */
+p a,
+li a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 /* ==========================================
    HERO SECTION
    ========================================== */
@@ -326,6 +333,11 @@ h1 {
   padding: var(--space-lg);
   transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
   border: 1px solid transparent;
+}
+
+/* Cards fade in on scroll. Only cards watched by the page are hidden, so
+   they stay visible when JavaScript does not run. */
+.feature-card.reveal {
   opacity: 0;
   transform: translateY(30px);
 }
@@ -578,7 +590,7 @@ h1 {
   font-size: clamp(0.85rem, 2.5vw, 1rem);
 }
 
-.prayer-section h2 {
+.prayer-summary h2 {
   font-weight: 900;
   letter-spacing: -0.02em;
   font-size: clamp(2rem, 7vw, 2.5rem);
@@ -609,7 +621,7 @@ h1 {
   text-align: start;
 }
 
-.prayer-setup h3 {
+.setup-title {
   text-align: center;
   font-size: clamp(1.1rem, 3.5vw, 1.3rem);
   color: var(--text-primary);
@@ -651,7 +663,7 @@ h1 {
   min-width: 0; /* Allow text to wrap properly */
 }
 
-.step-content h4 {
+.step-title {
   color: var(--text-primary);
   font-size: clamp(0.95rem, 2.5vw, 1.1rem);
   margin-bottom: 0.5rem;
@@ -1013,23 +1025,42 @@ footer {
 
 /* Large devices (desktops, 1024px and up) */
 @media (min-width: 1024px) {
+  /* The phone mockup sits beside the text, so the first screen shows both. */
   .hero {
-    /* Keep column layout - phone mockup stays below content */
-    flex-direction: column;
+    flex-direction: row;
+    gap: var(--space-2xl);
     padding: var(--space-2xl);
   }
-  
+
   .hero-content {
-    text-align: center;
-    max-width: 800px;
+    text-align: start;
+    max-width: 560px;
   }
-  
+
+  .logo-container,
   .cta-group {
-    justify-content: center;
+    justify-content: flex-start;
   }
-  
+
+  /* Aligned with the title, without the inner margin of centered text. */
+  .hero .headline,
+  .hero .tagline {
+    padding-inline: 0;
+  }
+
   .phone-mockup {
-    margin-top: var(--space-xl);
+    margin-top: 0;
+    width: auto;
+    flex-shrink: 0;
+  }
+
+  /* Home sections: less vertical space between the many short sections. */
+  .home > section:not(.hero) {
+    padding-block: 4.5rem;
+  }
+
+  .section-header {
+    margin-bottom: var(--space-xl);
   }
   
   .scroll-indicator {
@@ -1174,8 +1205,11 @@ footer {
    HOME ADDITIONS
    ========================================== */
 
+/* As wide as the section headers, so that the lines stay easy to read. */
 .nested-section .tree-caption {
-  margin-top: var(--space-lg);
+  max-width: 600px;
+  margin: var(--space-lg) auto 0;
+  text-align: center;
 }
 
 .wheel-tree {
@@ -1284,7 +1318,7 @@ footer {
   flex-direction: column;
   padding: 22px 12px 0;
   background: var(--bg-dark);
-  font-family: 'Roboto', 'Roboto', sans-serif;
+  font-family: 'Roboto', sans-serif;
   text-align: start;
 }
 
@@ -1514,7 +1548,7 @@ footer {
    ========================================== */
 .section-title,
 .wheel-info h2,
-.prayer-section h2,
+.prayer-summary h2,
 .cta-section h2 {
   font-size: clamp(1.6rem, 6vw, 2.6rem);
   line-height: 1.2;
@@ -1567,7 +1601,7 @@ footer {
   position: absolute;
   top: var(--space-md);
   inset-inline-end: var(--space-md);
-  z-index: 10;
+  z-index: 20; /* Above .hero-content, which would take the clicks */
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -1575,6 +1609,13 @@ footer {
 
 .floating-controls .floating-language {
   position: static;
+}
+
+/* On phones, the hero starts below the controls instead of under them. */
+@media (max-width: 767px) {
+  .hero {
+    padding-top: 4.5rem;
+  }
 }
 
 /* ==========================================
@@ -1848,4 +1889,15 @@ footer {
   flex: 1 1 360px;
   max-width: 600px;
   margin: 0;
+}
+
+/* ==========================================
+   NOT FOUND PAGE
+   ========================================== */
+.not-found {
+  text-align: center;
+}
+
+.not-found .btn {
+  margin-top: var(--space-md);
 }

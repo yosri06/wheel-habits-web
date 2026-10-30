@@ -8,19 +8,16 @@ const systemTheme = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
 
-const savedTheme = () => {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-};
+// The theme chosen during this visit or saved before, set on <html> by
+// index.html and toggle(). It survives navigation even when storage is blocked.
+const chosenTheme = () =>
+  typeof document !== "undefined" ? document.documentElement.dataset.theme : undefined;
 
 /// Switches between the light and dark themes. Without a choice, the page
-/// follows the system; index.html applies a saved choice before drawing.
+/// follows the system.
 const ThemeSwitcher = () => {
   const c = useContent(COMMON);
-  const [theme, setTheme] = useState(() => savedTheme() ?? systemTheme());
+  const [theme, setTheme] = useState(() => chosenTheme() ?? systemTheme());
 
   // Without a saved choice, the page follows system changes: so does the
   // button, so that one click always switches the theme shown.
@@ -28,7 +25,7 @@ const ThemeSwitcher = () => {
     const query = window.matchMedia?.("(prefers-color-scheme: light)");
     if (!query) return undefined;
     const follow = (event) => {
-      if (!savedTheme()) setTheme(event.matches ? "light" : "dark");
+      if (!chosenTheme()) setTheme(event.matches ? "light" : "dark");
     };
     query.addEventListener("change", follow);
     return () => query.removeEventListener("change", follow);

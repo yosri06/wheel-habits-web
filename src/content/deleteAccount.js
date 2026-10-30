@@ -18,6 +18,10 @@ export const DELETE_ACCOUNT = {
         ],
       },
       {
+        h2: "Without the app",
+        blocks: [{ p: "You can also request deletion by email, without installing the app: write to [pactence@tutamail.com](mailto:pactence@tutamail.com?subject=Delete%20my%20account) from the email address of your Google account. We delete your account and its data within 30 days and confirm by email." }],
+      },
+      {
         h2: "What is deleted",
         blocks: [
           {
@@ -59,6 +63,10 @@ export const DELETE_ACCOUNT = {
           },
           { p: "La suppression est immédiate et définitive." },
         ],
+      },
+      {
+        h2: "Sans l'application",
+        blocks: [{ p: "Vous pouvez aussi demander la suppression par e-mail, sans installer l'app : écrivez à [pactence@tutamail.com](mailto:pactence@tutamail.com?subject=Supprimer%20mon%20compte) depuis l'adresse e-mail de votre compte Google. Nous supprimons votre compte et ses données sous 30 jours et vous le confirmons par e-mail." }],
       },
       {
         h2: "Ce qui est supprimé",
@@ -106,6 +114,10 @@ export const DELETE_ACCOUNT = {
         ],
       },
       {
+        h2: "Sin la app",
+        blocks: [{ p: "También puedes solicitar la eliminación por correo, sin instalar la app: escribe a [pactence@tutamail.com](mailto:pactence@tutamail.com?subject=Eliminar%20mi%20cuenta) desde la dirección de correo de tu cuenta de Google. Eliminamos tu cuenta y sus datos en un plazo de 30 días y te lo confirmamos por correo." }],
+      },
+      {
         h2: "Qué se elimina",
         blocks: [
           {
@@ -147,6 +159,10 @@ export const DELETE_ACCOUNT = {
           },
           { p: "يتم الحذف فورًا ولا يمكن التراجع عنه." },
         ],
+      },
+      {
+        h2: "بدون التطبيق",
+        blocks: [{ p: "يمكنك أيضًا طلب الحذف عبر البريد الإلكتروني دون تثبيت التطبيق: راسلنا على [pactence@tutamail.com](mailto:pactence@tutamail.com?subject=Delete%20my%20account) من عنوان البريد الإلكتروني لحسابك في Google. نحذف حسابك وبياناته خلال 30 يومًا ونؤكد لك ذلك عبر البريد الإلكتروني." }],
       },
       {
         h2: "ما الذي يُحذف",

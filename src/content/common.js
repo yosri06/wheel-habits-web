@@ -10,6 +10,8 @@ export const COMMON = {
     language: "Language",
     lightTheme: "Light theme",
     darkTheme: "Dark theme",
+    notFoundTitle: "Page not found",
+    notFoundText: "This page does not exist or has moved.",
   },
   fr: {
     home: "Accueil",
@@ -22,6 +24,8 @@ export const COMMON = {
     language: "Langue",
     lightTheme: "Thème clair",
     darkTheme: "Thème sombre",
+    notFoundTitle: "Page introuvable",
+    notFoundText: "Cette page n'existe pas ou a été déplacée.",
   },
   es: {
     home: "Inicio",
@@ -34,6 +38,8 @@ export const COMMON = {
     language: "Idioma",
     lightTheme: "Tema claro",
     darkTheme: "Tema oscuro",
+    notFoundTitle: "Página no encontrada",
+    notFoundText: "Esta página no existe o se ha movido.",
   },
   ar: {
     home: "الرئيسية",
@@ -46,5 +52,7 @@ export const COMMON = {
     language: "اللغة",
     lightTheme: "المظهر الفاتح",
     darkTheme: "المظهر الداكن",
+    notFoundTitle: "الصفحة غير موجودة",
+    notFoundText: "هذه الصفحة غير موجودة أو تم نقلها.",
   },
 };
